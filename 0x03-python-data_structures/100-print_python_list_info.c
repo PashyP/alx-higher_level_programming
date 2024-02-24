@@ -1,17 +1,28 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include <Python.h>
-/**
- * print_python_list_info -  function that prints some basic
- *							info about Python lists
- * @p: python list
- */
+#include <stdio.h>
+
 void print_python_list_info(PyObject *p)
 {
-	int elem;
+	Py_ssize_t psize;
+	Py_ssize_t allocated;
+	Py_ssize_t i;
+	PyObject *item;
+	PyTypeObject *item_type_obj;
+	const char *type;
 
-	printf("[*] Size of the Python List = %lu\n", Py_SIZE(p));
-	printf("[*] Allocated = %lu\n", ((PyListObject *)p)->allocated);
-	for (elem = 0; elem < Py_SIZE(p); elem++)
-		printf("Element %d: %s\n", elem, Py_TYPE(PyList_GetItem(p, elem))->tp_name);
+	psize = Py_SIZE(p);
+	PyListObject *allocd;
+	allocd = (PyListObject *)p;
+	allocated = allocd->allocated;
+
+	printf("[*] Size of the Python List = %lu\n", psize);
+	printf("[*] Allocated = %lu\n", allocated);
+
+	for (i = 0; i < psize; i++)
+	{
+		item = PyList_GET_ITEM(p, i);
+		item_type_obj = Py_TYPE(item);
+		type = item_type_obj->tp_name;
+		printf("Element %lu: %s\n", i, type);
+	}
 }
